@@ -1,3 +1,10 @@
 # myAvrTerminal
 
-myAvrTerminal is a Linux terminal for mySmartUSB MK3.
+myAvrTerminal is a very basic Linux terminal for mySmartUSB MK3.
+
+This project is aimed to give Linux user an easy access
+to mySmartUSB programmer for Amtel microcontroller.
+
+Why a special terminal? Its because the programmer understands
+only Windows encoded chraters while modern Linux uses utf-8
+encoded characters.
