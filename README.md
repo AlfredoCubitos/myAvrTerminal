@@ -6,5 +6,5 @@ This project is aimed to give Linux user an easy access
 to mySmartUSB programmer for Amtel microcontroller.
 
 Why a special terminal? Its because the programmer understands
-only Windows encoded chraters while modern Linux uses utf-8
+only Windows encoded characters while modern Linux uses utf-8
 encoded characters.
