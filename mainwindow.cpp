@@ -87,10 +87,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
             this, &MainWindow::handleError);
 
-
     connect(serial, &QSerialPort::readyRead, this, &MainWindow::readData);
 
     connect(console, &Console::getData, this, &MainWindow::writeData);
+
+    connect(settings,&SettingsDialog::changeBaudrate,this,&MainWindow::baudRateChanged);
 
 }
 
@@ -156,6 +157,11 @@ void MainWindow::readData()
 {
     QByteArray data = serial->readAll();
     console->putData(data);
+}
+
+void MainWindow::baudRateChanged(qint32 baudrate)
+{
+    serial->setBaudRate(baudrate);
 }
 
 void MainWindow::handleError(QSerialPort::SerialPortError error)

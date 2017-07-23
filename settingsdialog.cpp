@@ -78,6 +78,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
             this, &SettingsDialog::showPortInfo);
     connect(ui->baudRateBox,  static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &SettingsDialog::checkCustomBaudRatePolicy);
+
     connect(ui->serialPortInfoListBox,  static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &SettingsDialog::checkCustomDevicePathPolicy);
 
@@ -128,6 +129,13 @@ void SettingsDialog::checkCustomBaudRatePolicy(int idx)
         QLineEdit *edit = ui->baudRateBox->lineEdit();
         edit->setValidator(intValidator);
     }
+}
+
+void SettingsDialog::getBaudrate()
+{
+    int idx = ui->baudRateBox->currentIndex();
+    qint32 baud = ui->baudRateBox->itemData(idx).toInt();
+    emit changeBaudrate(baud);
 }
 
 void SettingsDialog::checkCustomDevicePathPolicy(int idx)

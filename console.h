@@ -53,6 +53,7 @@
 #define CONSOLE_H
 
 #include <QPlainTextEdit>
+#include <QList>
 
 class Console : public QPlainTextEdit
 {
@@ -60,6 +61,7 @@ class Console : public QPlainTextEdit
 
 signals:
     void getData(const QByteArray &data);
+
 
 public:
     explicit Console(QWidget *parent = nullptr);
@@ -77,8 +79,12 @@ protected:
 private:
     bool localEchoEnabled;
     QString buffer;
+    QList<QString> history;
+    int hidx;
 
     void sendData();
+    void getHistory();
+    void addToHistory(const QString cmd);
 };
 
 #endif // CONSOLE_H

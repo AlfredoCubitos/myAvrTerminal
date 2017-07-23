@@ -57,11 +57,16 @@
 #include <QtCore/QDebug>
 #include <QTextCodec>
 #include <QDebug>
+/**
+  * define max history length
+**/
+#define HISTORY 30
 
 Console::Console(QWidget *parent)
     : QPlainTextEdit(parent)
     , localEchoEnabled(false)
 {
+    hidx = 0;
     document()->setMaximumBlockCount(100);
     QPalette p = palette();
     p.setColor(QPalette::Base, Qt::black);
@@ -90,7 +95,14 @@ void Console::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Left:
     case Qt::Key_Right:
     case Qt::Key_Up:
+        hidx++;
+        getHistory();
+        break;
     case Qt::Key_Down:
+        if (hidx > 0)
+            hidx--;
+        getHistory();
+        break;
     case Qt::Key_Return:
         QPlainTextEdit::keyPressEvent(e);
         sendData();
@@ -104,6 +116,8 @@ void Console::keyPressEvent(QKeyEvent *e)
 
 void Console::sendData()
 {
+    addToHistory(buffer);
+
     buffer.append("\r\n");
     QTextCodec *codec = QTextCodec::codecForName("Windows-1252");
     // out.setCodec("Windows-1252");
@@ -111,6 +125,31 @@ void Console::sendData()
     buffer.clear();
     qDebug() << output;
     emit getData(output);
+}
+
+void Console::addToHistory(const QString cmd)
+{
+    history.prepend(cmd);
+    if (history.count() > HISTORY)
+        history.removeLast();
+}
+
+void Console::getHistory()
+{
+    if (history.isEmpty())
+        return;
+    if (hidx > history.count()-1)
+        hidx = 0;
+
+    QTextCursor cursor = QPlainTextEdit::textCursor();
+    cursor.beginEditBlock();
+    cursor.movePosition(QTextCursor::StartOfLine,QTextCursor::KeepAnchor);
+    cursor.select(QTextCursor::LineUnderCursor);
+    cursor.removeSelectedText();
+    cursor.endEditBlock();
+    buffer.clear();
+    buffer.append(history.at(hidx));
+    putData(history.at(hidx).toLocal8Bit());
 }
 
 void Console::mousePressEvent(QMouseEvent *e)

@@ -82,6 +82,7 @@ public:
 private slots:
     void openSerialPort();
     void closeSerialPort();
+    void baudRateChanged(qint32 baudrate);
     void about();
     void writeData(const QByteArray &data);
     void readData();

@@ -100,17 +100,25 @@ private slots:
     void checkCustomBaudRatePolicy(int idx);
     void checkCustomDevicePathPolicy(int idx);
 
+
 private:
     void fillPortsParameters();
     void fillPortsInfo();
     void updateSettings();
     void readSettings();
     void writeSettings();
+    void getBaudrate();
 
 private:
     Ui::SettingsDialog *ui;
     Settings currentSettings;
     QIntValidator *intValidator;
+
+
+
+signals:
+    void changeBaudrate(qint32 baudrate);
+
 };
 
 #endif // SETTINGSDIALOG_H
