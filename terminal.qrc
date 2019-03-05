@@ -6,5 +6,8 @@
         <file>images/settings.png</file>
         <file>images/clear.png</file>
         <file>images/log.png</file>
+        <file>images/myAvrmode.png</file>
+        <file>images/myAvr910.png</file>
+        <file>images/myAvrstk500.png</file>
     </qresource>
 </RCC>

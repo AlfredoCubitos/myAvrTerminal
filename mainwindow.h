@@ -87,10 +87,21 @@ private slots:
     void writeData(const QByteArray &data);
     void readData();
 
+    void actionSetProgMode();
+    void actionSetDataMode();
+    void actionSetQuiteMode();
+    void actionResetBoard();
+    void actionReasetProgrammer();
+    void actionGetStatus();
+
     void handleError(QSerialPort::SerialPortError error);
+    void bytesSendToPort(qint64 bytes);
+
+
 
 private:
     void initActionsConnections();
+    void setMode(const QString &mode);
 
 private:
     void showStatusMessage(const QString &message);

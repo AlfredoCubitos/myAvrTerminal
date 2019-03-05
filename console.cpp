@@ -121,7 +121,7 @@ void Console::sendData()
     buffer.append("\r\n");
     QTextCodec *codec = QTextCodec::codecForName("Windows-1252");
     // out.setCodec("Windows-1252");
-    QByteArray output = codec->fromUnicode(buffer);;
+    QByteArray output = codec->fromUnicode(buffer);
     buffer.clear();
     qDebug() << output;
     emit getData(output);

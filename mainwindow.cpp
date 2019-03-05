@@ -58,7 +58,8 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QtSerialPort/QSerialPort>
-
+#include <QTextCodec>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -88,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, &MainWindow::handleError);
 
     connect(serial, &QSerialPort::readyRead, this, &MainWindow::readData);
+    connect(serial, &QSerialPort::bytesWritten, this,&MainWindow::bytesSendToPort);
 
     connect(console, &Console::getData, this, &MainWindow::writeData);
 
@@ -151,12 +153,24 @@ void MainWindow::about()
 void MainWindow::writeData(const QByteArray &data)
 {
     serial->write(data);
+    serial->waitForBytesWritten(-1);
+
+    //serial->close();
+}
+
+void MainWindow::bytesSendToPort(qint64 bytes)
+{
+    qDebug() << "Bytes send" << bytes;
 }
 
 void MainWindow::readData()
 {
     QByteArray data = serial->readAll();
     console->putData(data);
+   // QTextCodec *codec = QTextCodec::codecForName("Windows-1252");
+    // out.setCodec("Windows-1252");
+    //QByteArray output = codec->toUnicode(data);
+    qDebug() << "Data: " << data.toHex();
 }
 
 void MainWindow::baudRateChanged(qint32 baudrate)
@@ -182,9 +196,46 @@ void MainWindow::initActionsConnections()
     connect(ui->actionClear, &QAction::triggered, console, &Console::clear);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
     connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
+
+    connect(ui->actionProgMode,&QAction::triggered,this,&MainWindow::actionSetProgMode);
+    connect(ui->actionDataMode,&QAction::triggered,this,&MainWindow::actionSetDataMode);
+    connect(ui->actionQuiteMode,&QAction::triggered,this,&MainWindow::actionSetQuiteMode);
+    connect(ui->actionResetBoard,&QAction::triggered,this,&MainWindow::actionResetBoard);
+    connect(ui->actionReset_Programmer,&QAction::triggered,this,&MainWindow::actionReasetProgrammer);
+    connect(ui->actionGetStatus,&QAction::triggered,this,&MainWindow::actionGetStatus);
 }
 
 void MainWindow::showStatusMessage(const QString &message)
 {
     status->setText(message);
+}
+
+void MainWindow::actionSetProgMode(){setMode("p");}
+void MainWindow::actionSetDataMode(){setMode("d");}
+void MainWindow::actionSetQuiteMode(){setMode("q");}
+void MainWindow::actionResetBoard(){setMode("R");}
+void MainWindow::actionReasetProgrammer(){setMode("r");}
+void MainWindow::actionGetStatus(){setMode("i");}
+
+void MainWindow::setMode(const QString &mode)
+{
+    QString protocol;
+    protocol ="æµº¹²³©";
+
+    protocol.append(mode);
+
+    protocol.append("\r\n");
+
+    QTextCodec *codec = QTextCodec::codecForName("Windows-1252");
+    QByteArray setmode = codec->fromUnicode(protocol);
+
+    /**
+      *ToDo: check errors
+      **/
+    serial->clear();
+
+     console->clear();
+    qDebug() << setmode;
+    writeData(setmode);
+
 }

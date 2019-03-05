@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCalls">
@@ -52,9 +52,22 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menuAVR_cmd">
+    <property name="title">
+     <string>AVR-cmd</string>
+    </property>
+    <addaction name="actionResetBoard"/>
+    <addaction name="actionReset_Programmer"/>
+    <addaction name="actionGetStatus"/>
+    <addaction name="separator"/>
+    <addaction name="actionProgMode"/>
+    <addaction name="actionDataMode"/>
+    <addaction name="actionQuiteMode"/>
+   </widget>
    <addaction name="menuCalls"/>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuAVR_cmd"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -67,6 +80,7 @@
    <addaction name="actionDisconnect"/>
    <addaction name="actionConfigure"/>
    <addaction name="actionClear"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout">
@@ -155,6 +169,36 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionResetBoard">
+   <property name="text">
+    <string>Reset Board</string>
+   </property>
+  </action>
+  <action name="actionReset_Programmer">
+   <property name="text">
+    <string>Reset Programmer</string>
+   </property>
+  </action>
+  <action name="actionProgMode">
+   <property name="text">
+    <string>Prog. Mode</string>
+   </property>
+  </action>
+  <action name="actionDataMode">
+   <property name="text">
+    <string>Data Mode</string>
+   </property>
+  </action>
+  <action name="actionQuiteMode">
+   <property name="text">
+    <string>Quite Mode</string>
+   </property>
+  </action>
+  <action name="actionGetStatus">
+   <property name="text">
+    <string>Get Status</string>
    </property>
   </action>
  </widget>
