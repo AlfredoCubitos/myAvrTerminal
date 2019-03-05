@@ -61,6 +61,7 @@
 #include <QTextCodec>
 #include <QDebug>
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -84,9 +85,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addWidget(status);
 
     initActionsConnections();
+    showStatusMessage(tr("Disconnected!"));
 
-    connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
-            this, &MainWindow::handleError);
+
+    connect(serial, &QSerialPort::errorOccurred,this,&MainWindow::handleError);
 
     connect(serial, &QSerialPort::readyRead, this, &MainWindow::readData);
     connect(serial, &QSerialPort::bytesWritten, this,&MainWindow::bytesSendToPort);
@@ -146,7 +148,7 @@ void MainWindow::about()
 {
     QMessageBox::about(this, tr("About myAvr Terminal"),
                        tr("The <b>myAvr Terminal</b> is aimed to connect "
-                          "a mySmartUSB MK3 to Linux. "
+                          "a mySmartUSB MK2 MK3 to Linux. "
                           "With this terminal you can use myMode commands"));
 }
 
@@ -154,8 +156,6 @@ void MainWindow::writeData(const QByteArray &data)
 {
     serial->write(data);
     serial->waitForBytesWritten(-1);
-
-    //serial->close();
 }
 
 void MainWindow::bytesSendToPort(qint64 bytes)
@@ -167,10 +167,26 @@ void MainWindow::readData()
 {
     QByteArray data = serial->readAll();
     console->putData(data);
+
    // QTextCodec *codec = QTextCodec::codecForName("Windows-1252");
     // out.setCodec("Windows-1252");
     //QByteArray output = codec->toUnicode(data);
-    qDebug() << "Data: " << data.toHex();
+    qDebug() << "Data: " << data << " " << progmode;
+    if (data.length() > 1){
+        if (progmode)
+        {
+            qDebug() << "Data2: " << "  " << data << data.at(2);
+
+            if (QString(data.at(2)) == "p")
+                console->putData(QByteArray("Programmer mode is set"));
+            else if (QString(data.at(2)) == "d")
+                console->putData(QByteArray("Data-bypass mode is set"));
+            else if (QString(data.at(2)) == "q")
+                console->putData(QByteArray("Quite mode is set"));
+        }
+        progmode=false;
+    }
+
 }
 
 void MainWindow::baudRateChanged(qint32 baudrate)
@@ -180,9 +196,11 @@ void MainWindow::baudRateChanged(qint32 baudrate)
 
 void MainWindow::handleError(QSerialPort::SerialPortError error)
 {
-    if (error == QSerialPort::ResourceError) {
+    if (error != QSerialPort::NoError){
         QMessageBox::critical(this, tr("Critical Error"), serial->errorString());
-        closeSerialPort();
+        if (serial->isOpen()) {
+            closeSerialPort();
+        }
     }
 }
 
@@ -210,12 +228,30 @@ void MainWindow::showStatusMessage(const QString &message)
     status->setText(message);
 }
 
-void MainWindow::actionSetProgMode(){setMode("p");}
-void MainWindow::actionSetDataMode(){setMode("d");}
-void MainWindow::actionSetQuiteMode(){setMode("q");}
-void MainWindow::actionResetBoard(){setMode("R");}
-void MainWindow::actionReasetProgrammer(){setMode("r");}
-void MainWindow::actionGetStatus(){setMode("i");}
+void MainWindow::actionSetProgMode(){
+     progmode = true;
+    setMode("p");
+}
+void MainWindow::actionSetDataMode(){
+    progmode = true;
+    setMode("d");
+}
+void MainWindow::actionSetQuiteMode(){
+    progmode = true;
+    setMode("q");
+}
+void MainWindow::actionResetBoard(){
+    progmode = true;
+    setMode("R");
+}
+void MainWindow::actionReasetProgrammer(){
+    progmode = true;
+    setMode("r");
+}
+void MainWindow::actionGetStatus(){
+    progmode = true;
+    setMode("i");
+}
 
 void MainWindow::setMode(const QString &mode)
 {

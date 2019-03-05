@@ -111,6 +111,8 @@ private:
     Console *console;
     SettingsDialog *settings;
     QSerialPort *serial;
+
+    bool progmode=false;
 };
 
 #endif // MAINWINDOW_H
